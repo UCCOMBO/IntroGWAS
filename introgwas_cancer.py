@@ -10,14 +10,15 @@ from math import floor, log10, inf
 
 number_of_SNPs = 5
 
-def allele_frequencies():
+def allele_frequencies(number_of_SNPs = 5):
     np.random.seed(42)
     f = npr.beta(4, 4, size=number_of_SNPs)
     return f
 
-def simulate_genotypes(number_of_people=1,randomseed=None):
+def simulate_genotypes(number_of_people=1,number_of_SNPs = 5
+,randomseed=None):
     # get allele frequencies
-    probabilities = allele_frequencies()
+    probabilities = allele_frequencies(number_of_SNPs)
     #set the random seed
     if randomseed is None:
         np.random.seed(np.int64(time()))
@@ -29,10 +30,17 @@ def simulate_genotypes(number_of_people=1,randomseed=None):
         genotypes[:, i] = npr.binomial(2, probabilities[i], size=number_of_people)
     return genotypes
 
-def true_effect_sizes():
-    return [0,-2,0,3,0]
+def true_effect_sizes(number_of_SNPs = 5):
+    np.random.seed(number_of_SNPs)
+    if number_of_SNPs == 5:
+        return [0,-2,0,3,0]
+    else:
+        effect_sizes = np.random.normal(0,3,number_of_SNPs)
+        effect_sizes[abs(effect_sizes) < 2] = 0
+        return effect_sizes
 
-def simulate_trait_levels(genotypes, standard_deviation=10,randomseed=None):
+def simulate_trait_levels(genotypes, standard_deviation=10,number_of_SNPs = 5
+,randomseed=None):
     '''
     The trait of interest for our GWAS workshop is # of cancer cells. 
     '''
@@ -44,14 +52,15 @@ def simulate_trait_levels(genotypes, standard_deviation=10,randomseed=None):
     #cast to an array so that this works with list or array input
     genotypes = np.array(genotypes)
     # Simulate disease status for each individual
-    m = true_effect_sizes()
+    m = true_effect_sizes(number_of_SNPs)
     number_of_people, number_of_SNPs = genotypes.shape
     genetic_component = np.dot(genotypes, m)
     environmental_component = np.random.normal(3000, standard_deviation, number_of_people)
     trait_levels = environmental_component + genetic_component
     return abs(np.round(trait_levels,0))
 
-def create_dataframe(genotypes,trait_levels):
+def create_dataframe(genotypes,trait_levels, number_of_SNPs = 5
+):
   columns = [f"SNP {i+1}" for i in range(number_of_SNPs)]
   df = pd.DataFrame(genotypes,columns=columns)
   df["Cancer cells/uL"] = trait_levels
