@@ -1,6 +1,6 @@
 # packages needed to run binder 
-numpy==1.15.*
-matplotlib==3.0.*
-scipy==1.2.*
-pandas==2.3.*
+numpy
+matplotlib
+scipy
+pandas
 seaborn
