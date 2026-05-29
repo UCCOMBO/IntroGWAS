@@ -33,7 +33,7 @@ def simulate_genotypes(number_of_people=1,number_of_SNPs = 5
 def true_effect_sizes(number_of_SNPs = 5):
     np.random.seed(number_of_SNPs)
     if number_of_SNPs == 5:
-        return [0,-2,0,3,0]
+        return [0,-40,0,60,0]
     else:
         effect_sizes = np.random.normal(0,3,number_of_SNPs)
         effect_sizes[abs(effect_sizes) < 2] = 0
@@ -55,7 +55,7 @@ def simulate_trait_levels(genotypes, standard_deviation=10,number_of_SNPs = 5
     m = true_effect_sizes(number_of_SNPs)
     number_of_people, number_of_SNPs = genotypes.shape
     genetic_component = np.dot(genotypes, m)
-    environmental_component = np.random.normal(3000, standard_deviation, number_of_people)
+    environmental_component = np.random.normal(200, standard_deviation, number_of_people)
     trait_levels = environmental_component + genetic_component
     return abs(np.round(trait_levels,0))
 
